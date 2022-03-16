@@ -99,7 +99,7 @@ const login = (acno, password) => {
 
 
 //deposit definition
-const deposit = (acno, password, amt)=> {
+const deposit = (acno, password, amt) => {
   var amount = parseInt(amt)
 
   if (acno in database) {
@@ -120,7 +120,7 @@ const deposit = (acno, password, amt)=> {
       return {
         statusCode: 422,
         status: false,
-  message:"Incorrect password"
+        message: "Incorrect password"
       }
     }
   }
@@ -129,7 +129,7 @@ const deposit = (acno, password, amt)=> {
       statusCode: 422,
       status: false,
       message: "User does not exist"
- 
+
     }
   }
 }

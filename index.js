@@ -101,18 +101,20 @@ app.delete('/',(req,res)=>{
 // //     res.send("Already exist please log in")
 // // }
 
+// instead we can give the entire result as response to client. also we should give the status
 // res.status(result.statusCode).json(result)
 // })
 
 
 //bank app- API
-//1 register API
+//1 register API (after defining register function based on status)
 app.post('/register',(req,res)=>{
 const result=dataService.register(req.body.acno,req.body.pswd,req.body.uname)  
+//we can give the entire result as response to client. also we should give the status
 res.status(result.statusCode).json(result)
 })
 
-//2 login API
+//2 login API 
 app.post('/login',(req,res)=>{
     const result=dataService.login(req.body.acno,req.body.password)
     res.status(result.statusCode).json(result)
