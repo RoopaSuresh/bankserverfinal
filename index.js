@@ -5,10 +5,14 @@
 const express=require('express')
 //importing dataservice.js
 const dataService=require('./services/data.service')
+//import jsonwebtoken
+const jwt = require('jsonwebtoken')
 
 
 
-//step 2 to create an app using express
+
+//step 2 to create a server app using express
+//(here we have named the server application as app)
 //its format is const app=the variable in which express has been assigned to with function call ie()
 const app=express()
 
@@ -63,6 +67,52 @@ app.patch('/',(req,res)=>{
 app.delete('/',(req,res)=>{
     res.send("It's a delete method")
 })
+
+
+//application specific middleware
+const appMiddleware=(req,res,next)=>{
+    console.log("Application specific middleware");
+next()
+}
+
+//giving appMiddleware to the entire server application ie, app
+app.use(appMiddleware)
+
+
+// //middleware to verify token
+// const jwtMiddleware=(req,res,next)=>{
+
+//     const token=req.body.token
+
+//     //verify token
+//     jwtMiddleware.verify(token,'supersecretkey123')
+// }
+
+//middleware to verify token using try and catch for error
+const jwtMiddleware=(req,res,next)=>{
+
+  try
+  {  
+    //   const token=req.body.token
+      //normally token is givenn in headers.so instead ogf body give header and in square brackets give the name
+      const token=req.headers["x-access-token"]
+
+    //verify token
+    const data=jwt.verify(token,'supersecretkey123')
+    req.currentAcno=data.currentAcno
+next()
+}
+catch
+{
+    res.status(422).json({
+        statuscode:422,
+        status:false,
+        message:"please login"
+    })
+}
+}
+
+
 
 
 
@@ -121,11 +171,51 @@ app.post('/login',(req,res)=>{
 })
 
 //3 deposit API
-app.post('/deposit',(req,res)=>{
+// app.post('/deposit',(req,res)=>{
+//     const result=dataService.deposit(req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+//3deposit api after jwt token
+app.post('/deposit',jwtMiddleware,(req,res)=>{
     const result=dataService.deposit(req.body.acno,req.body.password,req.body.amt)
     res.status(result.statusCode).json(result)
 })
 
+
+// //4 withdraw API
+// app.post('/withdraw',(req,res)=>{
+//     const result=dataService.withdraw(req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+// //5 transaction API
+// app.post('/transaction',(req,res)=>{
+//     const result=dataService.getTransaction(req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+// //4 withdraw API after jwt token
+// app.post('/withdraw',jwtMiddleware,(req,res)=>{
+//     const result=dataService.withdraw(req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+//4 withdraw API after jwt token and after login
+app.post('/withdraw',jwtMiddleware,(req,res)=>{
+    const result=dataService.withdraw(req,req.body.acno,req.body.password,req.body.amt)
+    res.status(result.statusCode).json(result)
+})
+
+
+
+
+
+//5 transaction API after jwt token
+app.post('/transaction',jwtMiddleware,(req,res)=>{
+    const result=dataService.getTransaction(req.body.acno,req.body.password,req.body.amt)
+    res.status(result.statusCode).json(result)
+})
 
 
 

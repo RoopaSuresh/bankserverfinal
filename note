@@ -13,7 +13,9 @@
 
    4)to install nodemon- npm i -g nodemon
 
-   5)to run after installation of nodemon - nodemon index.js                                                    
+   5)to run after installation of nodemon - nodemon index.js     
+
+   6)install jsonwebtoken(for jwt token) - npm i jsonwebtoken                                               
 
 
 
@@ -39,3 +41,18 @@ _________________________
 9)run server
 
 10)parse json data in index.js
+
+11)Middleware - (req,res,next)=>{}
+
+             11.1)Application specific middleware- for the entire application
+
+             11.2)Router specific middleware- to particular requests only
+
+12)JWT token (to make the data secure during sending)
+
+steps to use JWT token(server creates the JWT token):
+____________________________________________________
+
+              12.1)token generation - using sign()
+
+              12.2)validate token - using verify()
