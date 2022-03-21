@@ -94,7 +94,7 @@ const jwtMiddleware=(req,res,next)=>{
   try
   {  
     //   const token=req.body.token
-      //normally token is givenn in headers.so instead ogf body give header and in square brackets give the name
+      //normally token is given in headers.so instead ogf body give header and in square brackets give the name
       const token=req.headers["x-access-token"]
 
     //verify token

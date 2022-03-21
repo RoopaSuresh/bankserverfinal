@@ -48,7 +48,7 @@ _________________________
 
              11.2)Router specific middleware- to particular requests only
 
-12)JWT token (to make the data secure during sending)
+12)JWT token - to authenticate user (to make the data secure during sending)
 
 steps to use JWT token(server creates the JWT token):
 ____________________________________________________

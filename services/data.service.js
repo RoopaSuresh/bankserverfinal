@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken')
 
 database = {
   1000: { acno: 1000, uname: "Neer", password: 1000, balance: 5000, transaction: [] },
-  1001: { acno: 1000, uname: "Vyom", password: 1001, balance: 5000, transaction: [] },
-  1002: { acno: 1000, uname: "Laisha", password: 1002, balance: 5000, transaction: [] }
+  1001: { acno: 1001, uname: "Vyom", password: 1001, balance: 5000, transaction: [] },
+  1002: { acno: 1002, uname: "Laisha", password: 1002, balance: 5000, transaction: [] }
 
 }
 
