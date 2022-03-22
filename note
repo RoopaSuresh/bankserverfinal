@@ -15,7 +15,9 @@
 
    5)to run after installation of nodemon - nodemon index.js     
 
-   6)install jsonwebtoken(for jwt token) - npm i jsonwebtoken                                               
+   6)install jsonwebtoken(for jwt token) - npm i jsonwebtoken       
+
+   7)install mangoose - npm i mangoose                                        
 
 
 
@@ -56,3 +58,15 @@ ____________________________________________________
               12.1)token generation - using sign()
 
               12.2)validate token - using verify()
+
+  13)db connection
+
+            13.1)install mongoose         
+
+            13.2)import mongoose   
+
+            13.3)define connection string
+
+            13.4)create model
+            
+            13.5)export model
