@@ -70,3 +70,9 @@ ____________________________________________________
             13.4)create model
             
             13.5)export model
+
+    14) Promise- to deal asynchronous events
+
+          14.1) then() -resolved state
+
+          14.2) catch() - reject state       

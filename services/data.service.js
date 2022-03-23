@@ -1,6 +1,9 @@
 //import jsonwebtoken
 const jwt = require('jsonwebtoken')
 
+//import User
+const db= require('./db')
+
 
 
 
@@ -33,34 +36,77 @@ database = {
 
 
 //register defining based on status
-const register = (acno, pswd, uname) => {
+// const register = (acno, pswd, uname) => {
 
-  if (acno in database) {
-    return {
-      statusCode: 422,
-      status: false,
-      message: "User already exist please login"
-    }
-  }
-  else {
+//   if (acno in database) {
+//     return {
+//       statusCode: 422,
+//       status: false,
+//       message: "User already exist please login"
+//     }
+//   }
+//   else {
 
-    database[acno] = {
-      acno,
-      uname,
-      password: pswd, //key:value
-      balance: 0,
-      transaction: []
-    }
-    console.log(database)
-    // return true
-    return {
-      statusCode: 200,
-      status: true,
-      message: "Successfully registered"
+//     database[acno] = {
+//       acno,
+//       uname,
+//       password: pswd, //key:value
+//       balance: 0,
+//       transaction: []
+//     }
+//     console.log(database)
+//     // return true
+//     return {
+//       statusCode: 200,
+//       status: true,
+//       message: "Successfully registered"
 
+//     }
+//   }
+// }
+
+//register using mongodb
+const register = (acno, password, uname) => {
+
+//asynchronous
+  return db.User.findOne({
+    //key:value key shouldbe the one defined in model and value should be the one which is inside register function bracket
+    //since key and value are same just type it once
+    acno
+  })
+  .then(user=>{
+    console.log(user);
+    if(user){
+      return {
+        statusCode: 422,
+        status: false,
+        message: "User already exist please login"
+      }  
     }
-  }
+    else{
+      const newUser=new db.User({
+        //since key and value are same just acno is enough
+        acno,
+        uname,
+        password,
+        balance:0,
+        transaction:[]
+      })
+      newUser.save()
+      return{
+        statusCode: 200,
+        status: true,
+        message: "Successfully registered"
+  
+      }
+    }
+  })
+
 }
+
+
+
+
 
 
 
@@ -105,36 +151,73 @@ const register = (acno, pswd, uname) => {
 
 
 //login after jwt token generation
+// const login = (acno, password) => {
+
+//   if (acno in database) {
+//     if (password == database[acno]["password"]) {
+//       currentAcno = acno
+//       //storing uname into a variable
+//       currentUname = database[acno]["uname"]
+
+//       //token generation
+//       const token = jwt.sign({
+//         currentAcno: acno
+//       }, 'supersecretkey123')
+
+//       return {
+//         statusCode: 200,
+//         status: true,
+//         message: "Successfully logged in",
+//         currentAcno,
+//         currentUname,
+//         token
+//       }
+//     }
+//     else {
+//       // return false
+//       return {
+//         statusCode: 422,
+//         status: false,
+//         message: "Incorrect password"
+
+//       }
+//     }
+//   }
+//   else {
+//     // return false
+//     return {
+//       statusCode: 422,
+//       status: false,
+//       message: "User does not exist"
+
+//     }
+//   }
+// }
+
+
+
+//login after mongo db
 const login = (acno, password) => {
-
-  if (acno in database) {
-    if (password == database[acno]["password"]) {
-      currentAcno = acno
-      //storing uname into a variable
-      currentUname = database[acno]["uname"]
-
-      //token generation
-      const token = jwt.sign({
-        currentAcno: acno
-      }, 'supersecretkey123')
-
-      return {
-        statusCode: 200,
-        status: true,
-        message: "Successfully logged in",
-        currentAcno,
-        currentUname,
-        token
-      }
-    }
-    else {
-      // return false
-      return {
-        statusCode: 422,
-        status: false,
-        message: "Incorrect password"
-
-      }
+//asynchronous
+return db.User.findOne({acno,password})
+.then(user=>{
+  if(user){
+    currentAcno = acno
+    //storing uname into a variable
+    currentUname = user.uname
+  
+    //token generation
+    const token = jwt.sign({
+      currentAcno: acno
+    }, 'supersecretkey123')
+  
+    return {
+      statusCode: 200,
+      status: true,
+      message: "Successfully logged in",
+      currentAcno,
+      currentUname,
+      token
     }
   }
   else {
@@ -142,11 +225,16 @@ const login = (acno, password) => {
     return {
       statusCode: 422,
       status: false,
-      message: "User does not exist"
-
+      message: "Incorrect password/Account number"
+  
     }
   }
+  
+})
+ 
 }
+
+
 
 
 

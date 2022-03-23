@@ -157,18 +157,50 @@ catch
 
 
 //bank app- API
-//1 register API (after defining register function based on status)
-app.post('/register',(req,res)=>{
-const result=dataService.register(req.body.acno,req.body.pswd,req.body.uname)  
-//we can give the entire result as response to client. also we should give the status
-res.status(result.statusCode).json(result)
-})
+// //1 register API (after defining register function based on status)
+// app.post('/register',(req,res)=>{
+// const result=dataService.register(req.body.acno,req.body.pswd,req.body.uname)  
+// //we can give the entire result as response to client. also we should give the status
+// res.status(result.statusCode).json(result)
+// })
 
-//2 login API 
-app.post('/login',(req,res)=>{
-    const result=dataService.login(req.body.acno,req.body.password)
+//1 register API (after mongo db)
+app.post('/register',(req,res)=>{
+    //asynchronous
+    //asynchronous cannot be defined into a constant
+   dataService.register(req.body.acno,req.body.pswd,req.body.uname)  
+.then(result=>{
     res.status(result.statusCode).json(result)
 })
+    })
+    
+
+
+
+
+
+
+
+// //2 login API 
+// app.post('/login',(req,res)=>{
+//     const result=dataService.login(req.body.acno,req.body.password)
+//     res.status(result.statusCode).json(result)
+// })
+
+//2 login API after mongo db
+app.post('/login',(req,res)=>{
+    //asynchronous
+    dataService.login(req.body.acno,req.body.password)
+    .then(result=>{
+        res.status(result.statusCode).json(result)
+    })
+})
+
+
+
+
+
+
 
 //3 deposit API
 // app.post('/deposit',(req,res)=>{
