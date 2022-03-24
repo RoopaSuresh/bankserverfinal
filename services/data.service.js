@@ -70,7 +70,7 @@ const register = (acno, password, uname) => {
 
 //asynchronous
   return db.User.findOne({
-    //key:value key shouldbe the one defined in model and value should be the one which is inside register function bracket
+    //key:value key should be the one defined in model and value should be the one which is inside register function bracket
     //since key and value are same just type it once
     acno
   })
@@ -244,40 +244,85 @@ return db.User.findOne({acno,password})
 
 
 //deposit definition
+// const deposit = (acno, password, amt) => {
+//   var amount = parseInt(amt)
+
+//   if (acno in database) {
+//     if (password == database[acno]["password"]) {
+//       database[acno]["balance"] += amount
+//       database[acno]["transaction"].push({
+//         //key:value
+//         amount: amount,
+//         type: "CREDIT"
+//       })
+//       return {
+//         statusCode: 200,
+//         status: true,
+//         message: amount + " successfully deposited and new balance is " + database[acno]["balance"]
+//       }
+//     }
+//     else {
+//       return {
+//         statusCode: 422,
+//         status: false,
+//         message: "Incorrect password"
+//       }
+//     }
+//   }
+//   else {
+//     return {
+//       statusCode: 422,
+//       status: false,
+//       message: "User does not exist"
+
+//     }
+//   }
+// }
+
+
+//deposit after mongo db
 const deposit = (acno, password, amt) => {
   var amount = parseInt(amt)
 
-  if (acno in database) {
-    if (password == database[acno]["password"]) {
-      database[acno]["balance"] += amount
-      database[acno]["transaction"].push({
-        //key:value
-        amount: amount,
-        type: "CREDIT"
-      })
-      return {
-        statusCode: 200,
-        status: true,
-        message: amount + " successfully deposited and new balance is " + database[acno]["balance"]
-      }
-    }
-    else {
-      return {
-        statusCode: 422,
-        status: false,
-        message: "Incorrect password"
-      }
+//asynchronous
+//check if the requested acno is in your db
+return db.User.findOne({acno,password})
+
+//the returned value should be given in then
+.then(user=>{
+  if(user){
+    user.balance+=amount
+    user.transaction.push({
+      //key:value
+      amount: amount,
+      type: "CREDIT"
+    })
+    user.save()
+
+    return {
+      statusCode: 200,
+      status: true,
+      message: amount + " successfully deposited and new balance is " + user.balance
     }
   }
   else {
     return {
       statusCode: 422,
       status: false,
-      message: "User does not exist"
-
+      message: "Incorrect password/Account number"
     }
   }
+})
+
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -332,69 +377,145 @@ const deposit = (acno, password, amt) => {
 
 
 //withdraw definition after token and middleware
+// const withdraw = (req,acno, password, amt) => {
+//   var amount = parseInt(amt)
+
+//   var currentAcno=req.currentAcno
+
+//   if (acno in database) {
+
+//     if (password == database[acno]["password"]) {
+
+// if(currentAcno==acno){
+
+//   if (database[acno]["balance"] > amount) {
+//     database[acno]["balance"] -= amount
+//     database[acno]["transaction"].push({
+//       //key:value
+//       amount: amount,
+//       type: "DEBIT"
+//     })
+//     return {
+//       statusCode: 200,
+//       status: true,
+//       message: "Amount is successfully debited and new amount is" + database[acno]["balance"],
+
+//     }
+
+//   }
+//   else {
+//     return {
+//       statusCode: 422,
+//       status: false,
+//       message: "insufficient balance"
+
+//     }
+//   }
+// }
+// else{
+//   return {
+//     statusCode: 422,
+//     status: false,
+//     message: "operation denied"
+
+//   }
+// }
+
+
+//     }
+//     else {
+//       return {
+//         statusCode: 422,
+//         status: false,
+//         message: "Incorrect password"
+
+//       }
+//     }
+//   }
+//   else {
+//     return {
+//       statusCode: 422,
+//       status: false,
+//       message: "User does not exist"
+
+//     }
+//   }
+// }
+
+
+//withdraw after mongo db
 const withdraw = (req,acno, password, amt) => {
   var amount = parseInt(amt)
 
   var currentAcno=req.currentAcno
 
-  if (acno in database) {
 
-    if (password == database[acno]["password"]) {
+//asynchronous
+//check if the requested acno is in your db
+return db.User.findOne({acno,password})
 
-if(currentAcno==acno){
+//the returned value should be given in then
+.then(user=>{
 
-  if (database[acno]["balance"] > amount) {
-    database[acno]["balance"] -= amount
-    database[acno]["transaction"].push({
-      //key:value
-      amount: amount,
-      type: "DEBIT"
-    })
-    return {
-      statusCode: 200,
-      status: true,
-      message: "Amount is successfully debited and new amount is" + database[acno]["balance"],
 
-    }
-
-  }
-  else {
+  if(currentAcno!=acno){
     return {
       statusCode: 422,
       status: false,
-      message: "insufficient balance"
-
+      message: "operation denied"
+  
     }
   }
+
+
+
+  if(user){
+
+    // if(currentAcno!=acno){
+    //   return {
+    //     statusCode: 422,
+    //     status: false,
+    //     message: "operation denied"
+    
+    //   }
+    // }
+    
+
+if(user.balance>amount){
+  user.balance-=amount
+  user.transaction.push({
+    //key:value
+    amount: amount,
+    type: "DEBIT"
+  })
+  user.save()
+  return {
+    statusCode: 200,
+    status: true,
+    message: amount + " successfully deposited and new balance is " + user.balance
+  }
 }
-else{
+else {
   return {
     statusCode: 422,
     status: false,
-    message: "operation denied"
+    message: "insufficient balance"
 
   }
 }
 
+}
 
-    }
-    else {
-      return {
-        statusCode: 422,
-        status: false,
-        message: "Incorrect password"
-
-      }
-    }
-  }
+    
   else {
     return {
       statusCode: 422,
       status: false,
-      message: "User does not exist"
-
+      message: "Incorrect password/Account number"
     }
   }
+})
+
 }
 
 
@@ -407,7 +528,29 @@ else{
 
 
 
-//transaction history
+
+
+// //transaction history
+// const getTransaction = (acno) => {
+//   if (acno in database) {
+//     return {
+//       statusCode: 200,
+//       status: true,
+//       transaction: database[acno]["transaction"]
+//     }
+//   }
+//   else {
+//     return {
+//       statusCode: 422,
+//       status: false,
+//       message: "User does not exist"
+//     }
+//   }
+// }
+
+
+
+//transaction history after mongo db
 const getTransaction = (acno) => {
   if (acno in database) {
     return {
@@ -424,7 +567,6 @@ const getTransaction = (acno) => {
     }
   }
 }
-
 
 
 

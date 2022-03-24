@@ -208,11 +208,24 @@ app.post('/login',(req,res)=>{
 //     res.status(result.statusCode).json(result)
 // })
 
-//3deposit api after jwt token
+// //3deposit api after jwt token
+// app.post('/deposit',jwtMiddleware,(req,res)=>{
+//     const result=dataService.deposit(req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+//3deposit api after mongo db
 app.post('/deposit',jwtMiddleware,(req,res)=>{
-    const result=dataService.deposit(req.body.acno,req.body.password,req.body.amt)
-    res.status(result.statusCode).json(result)
+    dataService.deposit(req.body.acno,req.body.password,req.body.amt)
+    .then(result=>{
+        res.status(result.statusCode).json(result)
+    })
 })
+
+
+
+
+
 
 
 // //4 withdraw API
@@ -233,10 +246,18 @@ app.post('/deposit',jwtMiddleware,(req,res)=>{
 //     res.status(result.statusCode).json(result)
 // })
 
-//4 withdraw API after jwt token and after login
+// //4 withdraw API after jwt token and after login
+// app.post('/withdraw',jwtMiddleware,(req,res)=>{
+//     const result=dataService.withdraw(req,req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+//4 withdraw API after MONGO DB
 app.post('/withdraw',jwtMiddleware,(req,res)=>{
-    const result=dataService.withdraw(req,req.body.acno,req.body.password,req.body.amt)
+   dataService.withdraw(req,req.body.acno,req.body.password,req.body.amt)
+   .then(result=>{
     res.status(result.statusCode).json(result)
+   })
 })
 
 
