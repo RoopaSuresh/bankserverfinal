@@ -264,12 +264,19 @@ app.post('/withdraw',jwtMiddleware,(req,res)=>{
 
 
 
-//5 transaction API after jwt token
+// //5 transaction API after jwt token
+// app.post('/transaction',jwtMiddleware,(req,res)=>{
+//     const result=dataService.getTransaction(req.body.acno,req.body.password,req.body.amt)
+//     res.status(result.statusCode).json(result)
+// })
+
+//5 transaction API after mongo db
 app.post('/transaction',jwtMiddleware,(req,res)=>{
     const result=dataService.getTransaction(req.body.acno,req.body.password,req.body.amt)
-    res.status(result.statusCode).json(result)
+    .then(result=>{
+        res.status(result.statusCode).json(result)
+    })
 })
-
 
 
 

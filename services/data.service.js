@@ -481,7 +481,7 @@ return db.User.findOne({acno,password})
     // }
     
 
-if(user.balance>amount){
+if(user.balance>=amount){
   user.balance-=amount
   user.transaction.push({
     //key:value
@@ -552,20 +552,17 @@ else {
 
 //transaction history after mongo db
 const getTransaction = (acno) => {
-  if (acno in database) {
-    return {
-      statusCode: 200,
-      status: true,
-      transaction: database[acno]["transaction"]
+  //asynchronous
+  return db.User.findOne({acno})
+  .then(user=>{
+    if(user){
+      return {
+        statusCode: 200,
+        status: true,
+        transaction: user.transaction
+      } 
     }
-  }
-  else {
-    return {
-      statusCode: 422,
-      status: false,
-      message: "User does not exist"
-    }
-  }
+  })
 }
 
 
