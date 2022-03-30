@@ -9,6 +9,9 @@ const dataService=require('./services/data.service')
 const jwt = require('jsonwebtoken')
 
 
+//import cors
+const cors=require('cors')
+
 
 
 //step 2 to create a server app using express
@@ -17,6 +20,10 @@ const jwt = require('jsonwebtoken')
 const app=express()
 
 
+//use cors to specify origin
+app.use(cors({
+    origin:'http://localhost:4200'
+}))
 
 //to parse json
 app.use(express.json())
@@ -94,7 +101,7 @@ const jwtMiddleware=(req,res,next)=>{
   try
   {  
     //   const token=req.body.token
-      //normally token is given in headers.so instead ogf body give header and in square brackets give the name
+      //normally token is given in headers.so instead of body give header and in square brackets give the name
       const token=req.headers["x-access-token"]
 
     //verify token
@@ -272,12 +279,21 @@ app.post('/withdraw',jwtMiddleware,(req,res)=>{
 
 //5 transaction API after mongo db
 app.post('/transaction',jwtMiddleware,(req,res)=>{
-    const result=dataService.getTransaction(req.body.acno,req.body.password,req.body.amt)
+    dataService.getTransaction(req.body.acno,req.body.password,req.body.amt)
     .then(result=>{
         res.status(result.statusCode).json(result)
     })
 })
 
+
+//deleteAcc API after integrating with front end
+app.delete('/deleteAcc/:acno',jwtMiddleware,(req,res)=>{
+    dataService.deleteAcc(req.params.acno)
+    .then(result=>{
+        res.status(result.statusCode).json(result)
+    })
+
+})
 
 
 

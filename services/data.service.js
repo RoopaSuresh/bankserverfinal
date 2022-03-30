@@ -2,7 +2,7 @@
 const jwt = require('jsonwebtoken')
 
 //import User
-const db= require('./db')
+const db = require('./db')
 
 
 
@@ -68,39 +68,39 @@ database = {
 //register using mongodb
 const register = (acno, password, uname) => {
 
-//asynchronous
+  //asynchronous
   return db.User.findOne({
     //key:value key should be the one defined in model and value should be the one which is inside register function bracket
     //since key and value are same just type it once
     acno
   })
-  .then(user=>{
-    console.log(user);
-    if(user){
-      return {
-        statusCode: 422,
-        status: false,
-        message: "User already exist please login"
-      }  
-    }
-    else{
-      const newUser=new db.User({
-        //since key and value are same just acno is enough
-        acno,
-        uname,
-        password,
-        balance:0,
-        transaction:[]
-      })
-      newUser.save()
-      return{
-        statusCode: 200,
-        status: true,
-        message: "Successfully registered"
-  
+    .then(user => {
+      console.log(user);
+      if (user) {
+        return {
+          statusCode: 422,
+          status: false,
+          message: "User already exist please login"
+        }
       }
-    }
-  })
+      else {
+        const newUser = new db.User({
+          //since key and value are same just acno is enough
+          acno,
+          uname,
+          password,
+          balance: 0,
+          transaction: []
+        })
+        newUser.save()
+        return {
+          statusCode: 200,
+          status: true,
+          message: "Successfully registered"
+
+        }
+      }
+    })
 
 }
 
@@ -198,40 +198,40 @@ const register = (acno, password, uname) => {
 
 //login after mongo db
 const login = (acno, password) => {
-//asynchronous
-return db.User.findOne({acno,password})
-.then(user=>{
-  if(user){
-    currentAcno = acno
-    //storing uname into a variable
-    currentUname = user.uname
-  
-    //token generation
-    const token = jwt.sign({
-      currentAcno: acno
-    }, 'supersecretkey123')
-  
-    return {
-      statusCode: 200,
-      status: true,
-      message: "Successfully logged in",
-      currentAcno,
-      currentUname,
-      token
-    }
-  }
-  else {
-    // return false
-    return {
-      statusCode: 422,
-      status: false,
-      message: "Incorrect password/Account number"
-  
-    }
-  }
-  
-})
- 
+  //asynchronous
+  return db.User.findOne({ acno, password })
+    .then(user => {
+      if (user) {
+        currentAcno = acno
+        //storing uname into a variable
+        currentUname = user.uname
+
+        //token generation
+        const token = jwt.sign({
+          currentAcno: acno
+        }, 'supersecretkey123')
+
+        return {
+          statusCode: 200,
+          status: true,
+          message: "Successfully logged in",
+          currentAcno,
+          currentUname,
+          token
+        }
+      }
+      else {
+        // return false
+        return {
+          statusCode: 422,
+          status: false,
+          message: "Incorrect password/Account number"
+
+        }
+      }
+
+    })
+
 }
 
 
@@ -284,35 +284,35 @@ return db.User.findOne({acno,password})
 const deposit = (acno, password, amt) => {
   var amount = parseInt(amt)
 
-//asynchronous
-//check if the requested acno is in your db
-return db.User.findOne({acno,password})
+  //asynchronous
+  //check if the requested acno is in your db
+  return db.User.findOne({ acno, password })
 
-//the returned value should be given in then
-.then(user=>{
-  if(user){
-    user.balance+=amount
-    user.transaction.push({
-      //key:value
-      amount: amount,
-      type: "CREDIT"
+    //the returned value should be given in then
+    .then(user => {
+      if (user) {
+        user.balance += amount
+        user.transaction.push({
+          //key:value
+          amount: amount,
+          type: "CREDIT"
+        })
+        user.save()
+
+        return {
+          statusCode: 200,
+          status: true,
+          message: amount + " successfully deposited and new balance is " + user.balance
+        }
+      }
+      else {
+        return {
+          statusCode: 422,
+          status: false,
+          message: "Incorrect password/Account number"
+        }
+      }
     })
-    user.save()
-
-    return {
-      statusCode: 200,
-      status: true,
-      message: amount + " successfully deposited and new balance is " + user.balance
-    }
-  }
-  else {
-    return {
-      statusCode: 422,
-      status: false,
-      message: "Incorrect password/Account number"
-    }
-  }
-})
 
 }
 
@@ -444,77 +444,77 @@ return db.User.findOne({acno,password})
 
 
 //withdraw after mongo db
-const withdraw = (req,acno, password, amt) => {
+const withdraw = (req, acno, password, amt) => {
   var amount = parseInt(amt)
 
-  var currentAcno=req.currentAcno
+  var currentAcno = req.currentAcno
 
 
-//asynchronous
-//check if the requested acno is in your db
-return db.User.findOne({acno,password})
+  //asynchronous
+  //check if the requested acno is in your db
+  return db.User.findOne({ acno, password })
 
-//the returned value should be given in then
-.then(user=>{
-
-
-  if(currentAcno!=acno){
-    return {
-      statusCode: 422,
-      status: false,
-      message: "operation denied"
-  
-    }
-  }
+    //the returned value should be given in then
+    .then(user => {
 
 
+      if (currentAcno != acno) {
+        return {
+          statusCode: 422,
+          status: false,
+          message: "operation denied"
 
-  if(user){
+        }
+      }
 
-    // if(currentAcno!=acno){
-    //   return {
-    //     statusCode: 422,
-    //     status: false,
-    //     message: "operation denied"
-    
-    //   }
-    // }
-    
 
-if(user.balance>=amount){
-  user.balance-=amount
-  user.transaction.push({
-    //key:value
-    amount: amount,
-    type: "DEBIT"
-  })
-  user.save()
-  return {
-    statusCode: 200,
-    status: true,
-    message: amount + " successfully deposited and new balance is " + user.balance
-  }
-}
-else {
-  return {
-    statusCode: 422,
-    status: false,
-    message: "insufficient balance"
 
-  }
-}
+      if (user) {
 
-}
+        // if(currentAcno!=acno){
+        //   return {
+        //     statusCode: 422,
+        //     status: false,
+        //     message: "operation denied"
 
-    
-  else {
-    return {
-      statusCode: 422,
-      status: false,
-      message: "Incorrect password/Account number"
-    }
-  }
-})
+        //   }
+        // }
+
+
+        if (user.balance >= amount) {
+          user.balance -= amount
+          user.transaction.push({
+            //key:value
+            amount: amount,
+            type: "DEBIT"
+          })
+          user.save()
+          return {
+            statusCode: 200,
+            status: true,
+            message: amount + " successfully deposited and new balance is " + user.balance
+          }
+        }
+        else {
+          return {
+            statusCode: 422,
+            status: false,
+            message: "insufficient balance"
+
+          }
+        }
+
+      }
+
+
+      else {
+        return {
+          statusCode: 422,
+          status: false,
+          message: "Incorrect password/Account number"
+        }
+      }
+    })
 
 }
 
@@ -553,19 +553,49 @@ else {
 //transaction history after mongo db
 const getTransaction = (acno) => {
   //asynchronous
-  return db.User.findOne({acno})
-  .then(user=>{
-    if(user){
-      return {
-        statusCode: 200,
-        status: true,
-        transaction: user.transaction
-      } 
-    }
-  })
+  return db.User.findOne({ acno })
+    .then(user => {
+      if (user) {
+        return {
+          statusCode: 200,
+          status: true,
+          transaction: user.transaction
+        }
+      }
+      else {
+        return {
+          statusCode: 422,
+          status: false,
+          message: "User does not exist"
+        }
+      }
+    })
 }
 
 
+
+//deleteAcc API
+const deleteAcc = (acno) => {
+  //asynchronous
+  return db.User.deleteOne({
+    //the key that we give inside should be there in database
+    acno
+  })
+    .then(user => {
+      if (!user) {
+        return {
+          statusCode: 422,
+          status: false,
+          message: "Operation failed"
+        }
+      }
+      return {
+        statusCode: 200,
+        status: true,
+        message: "Requested account number" + acno + "deleted successfully"
+      }
+    })
+}
 
 
 
@@ -579,5 +609,6 @@ module.exports = {
   login,
   deposit,
   withdraw,
-  getTransaction
+  getTransaction,
+  deleteAcc
 }

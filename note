@@ -17,7 +17,9 @@
 
    6)install jsonwebtoken(for jwt token) - npm i jsonwebtoken       
 
-   7)install mangoose - npm i mangoose                                        
+   7)install mangoose - npm i mangoose   
+
+   8) install cors -  npm i cors                                   
 
 
 
@@ -75,4 +77,13 @@ ____________________________________________________
 
           14.1) then() -resolved state
 
-          14.2) catch() - reject state       
+          14.2) catch() - reject state     
+
+
+     15) cors - cross origin resource sharing => (integrating front end and back end)
+
+            15.1) install cors
+
+            15.2)import index.js
+
+            15.3) use cors to specify the origin in server app
